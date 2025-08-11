@@ -15,7 +15,8 @@ const  DashboardLayout=()=> {
       setExpandedNav(name);
     }
   };
-
+    console.log("hrms");
+    
   const navigateTo = (pageName) => {
     setCurrentPage(pageName);
   };

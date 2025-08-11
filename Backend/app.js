@@ -73,6 +73,9 @@ console.log('User connected:12345', socket.id);
   });
 });
 
+ console.log("log");
+ 
+
 app.get("/", (req, res) => {
   res.send("API working");
 });
