@@ -16,7 +16,7 @@ export const notificationApi = createApi({
     }),
     
     getUserNotification: builder.query({
-      query: () => ({
+      query: ({id}) => ({
         url: `/notification/user/${id}`,
         method: "GET",
       }),

@@ -26,14 +26,9 @@ import isConfirmed from '../../component/isConfirmed';
 const LeaveLogs = () => {
   const { data: leaveData = [], isLoading } = useGetEmployeeLeaveQuery()
 
-<<<<<<< HEAD
-  console.log("leaveData",leaveData);
-  
-=======
 
 
 
->>>>>>> b37c8d90d7cabdb29de67ad1100d56ae05fef4ec
   const [approveLeave] = useApproveLeaveMutation();
   const [leaveReaject] = useRejectLeaveMutation();
 
@@ -118,10 +113,13 @@ const LeaveLogs = () => {
         : [...prev, leaveId]
     );
   };
+ 
+    console.log("leaveData",leaveData);
+    
 
   const filteredLeaves = (leaveData || []).filter(leave => {
     const empName = leave?.employeeId?.name?.toLowerCase() || '';
-    const empId = leave?.employeeId?._id?.toString().slice(-4).toLowerCase() || '';
+    const empId = leave?.employeeId?.empId?.toString().slice(-4).toLowerCase() || '';
     const dept = leave?.department?.toLowerCase() || ''; // Optional, if you have department
     const year = new Date(leave?.createdAt).getFullYear().toString();
     const leaveDate = new Date(leave?.createdAt); // ✅ Date banaya
@@ -146,7 +144,7 @@ const LeaveLogs = () => {
     return matchesSearch && matchesStatus && matchesDepartment && matchesYear && matchesMonth;
   });
 
-  // console.log("filteredLeaves", filteredLeaves);
+  console.log("filteredLeaves", filteredLeaves);
 
 
   const exportExcell = () => {
@@ -216,6 +214,10 @@ const LeaveLogs = () => {
       </div>
     )
   }
+
+
+  console.log(leaveData);
+  
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -434,7 +436,7 @@ const LeaveLogs = () => {
                             className="rounded border-gray-300 text-[#06425F] focus:ring-blue-500"
                           />
                         </td> */}
-                        <td className="p-4 text-sm text-gray-900 font-medium">{leave?.employeeId?._id.slice(-4)}</td>
+                        <td className="p-4 text-sm text-gray-900 font-medium">{leave?.employeeId?.empId}</td>
                         <td className="p-4">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 text-sm font-medium">
@@ -487,9 +489,9 @@ const LeaveLogs = () => {
                                 </button>
                               </>
                             )}
-                            <button className="p-1 text-gray-600 hover:bg-gray-50 rounded transition-colors" title="View Details">
+                            {/* <button className="p-1 text-gray-600 hover:bg-gray-50 rounded transition-colors" title="View Details">
                               <FileText className="w-4 h-4" />
-                            </button>
+                            </button> */}
                           </div>
                         </td>
                       </tr>

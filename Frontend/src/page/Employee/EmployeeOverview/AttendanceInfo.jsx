@@ -54,6 +54,10 @@ function AttendanceInfo() {
     return 'NA';
   };
 
+
+
+  
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'P': return 'bg-green-100 text-green-800';
@@ -75,9 +79,9 @@ function AttendanceInfo() {
       Status: mapStatus(log.status, log.leave),
       "In Time": log.loginTime ? new Date(log.loginTime).toLocaleTimeString() : '--',
       "Out Time": log.logoutTime ? new Date(log.logoutTime).toLocaleTimeString() : '--',
-      "Work Duration": log.totalWorkingHour || '--',
+      "Work Duration": log.workingHours || '--',
       "Overtime": log.otTime || '--',
-      "Break Duration": log.breakDuration || '--',
+      // "Break Duration": log.breakDuration || '--',
       "Checked In": log.checkIn ? 'Yes' : 'No'
     }));
 
@@ -147,7 +151,7 @@ function AttendanceInfo() {
               <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Out Time</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Work Duration</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Overtime</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Break Duration</th>
+              {/* <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Break Duration</th> */}
               <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Check-in</th>
             </tr>
           </thead>
@@ -170,9 +174,9 @@ function AttendanceInfo() {
                     </td>
                     <td className="px-4 py-3 text-sm">{log.loginTime ? new Date(log.loginTime).toLocaleTimeString() : '--'}</td>
                     <td className="px-4 py-3 text-sm">{log.logoutTime ? new Date(log.logoutTime).toLocaleTimeString() : '--'}</td>
-                    <td className="px-4 py-3 text-sm">{log.totalWorkingHour || '--'}</td>
+                    <td className="px-4 py-3 text-sm">{log.workingHours || '--'}</td>
                     <td className="px-4 py-3 text-sm">{log.otTime || '--'}</td>
-                    <td className="px-4 py-3 text-sm">{log.breakDuration || '--'}</td>
+                    {/* <td className="px-4 py-3 text-sm">{log.breakDuration || '--'}</td> */}
                     <td className="px-4 py-3 text-sm">{log.checkIn ? 'Yes' : 'No'}</td>
                   </tr>
                 );

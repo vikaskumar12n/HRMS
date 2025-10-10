@@ -213,8 +213,8 @@ const Payroll = () => {
           <div className="bg-white p-3 rounded-lg shadow-sm border-l-4 border-orange-500">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-gray-600">Max Present Days</p>
-                <p className="text-lg font-bold">{highestPercentage}</p>
+                <p className="text-xs text-gray-600">Max Present Days % </p>
+                <p className="text-lg font-bold">{highestPercentage }%</p>
               </div>
               <Calendar className="w-6 h-6 text-orange-500" />
             </div>

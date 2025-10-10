@@ -14,6 +14,8 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+import img1 from '../assets/logo.png'
+
 const SideBar = () => {
   const [expandedNav, setExpandedNav] = useState(null);
   const [currentPage, setCurrentPage] = useState('Dashboard');
@@ -29,10 +31,10 @@ const SideBar = () => {
   const navItems = [
     { name: 'Dashboard', icon: <LayoutDashboard size={20} />, children: [], url: "/dashboard" },
     // { name: 'Recruitment', icon: <UserPlus size={20} />, children: [], url: "/dashboard/recruitment" },
-    { name: 'Onboarding', icon: <Rocket size={20} />, children: [
-      {name:'Onboard New Employee', url:"/dashboard/employee/add"},
-      // {name:'Onboarding Policies', url:"/dashboard/onboarding"},
-    ]},
+    // { name: 'Onboarding', icon: <Rocket size={20} />, children: [
+    //   {name:'Onboard New Employee', url:"/dashboard/employee/add"},
+    //   // {name:'Onboarding Policies', url:"/dashboard/onboarding"},
+    // ]},
     { 
       name: 'Employee', 
       icon: <Users size={20} />, 
@@ -49,23 +51,26 @@ const SideBar = () => {
       //  {name:"Attendance List", url:"/dashboard/attendance/list"},
        {name:"Attendance Logs", url:"/dashboard/attendance/logs"},
         // {name:"Employee Attendance", url:"/dashboard/attendance/employee"}  ,
-        {name:"Rules", url:"/dashboard/attendance/rules"}  
+        // {name:"Rules", url:"/dashboard/attendance/rules"}  
       ]
     },  
+      { name: 'Announcement', icon: <Bell size={20} />, children: [], url: "/dashboard/announcement" },
     { name: "Leave", icon: <Users size={20} />,
       children: [
       //  {name:"Leave", url:"/dashboard/leave"},
       //  {name:"Leave List", url:"/dashboard/leave/list"},
        {name:"Leave Logs", url:"/dashboard/leave/logs"},
-       {name:"Rules", url:"/dashboard/leave/rules"},
+      //  {name:"Rules", url:"/dashboard/leave/rules"},
       ]  
     },
      { name: 'Payroll', icon: <IndianRupee size={20} />, children: [], url: "/dashboard/payroll" },
      { name: 'Notification', icon: <Bell size={20} />, children: [], url: "/dashboard/notification" },
+      
      { name: 'About', icon: <Building2 size={20} />, children: [
         {name:"About Company",url:"/dashboard/about"},
-        {name:"Our Term & Condition",url:"/dashboard/term-condition"},
-        {name:"Our Policies", url:"/dashboard/policies"},
+        {name:"Privacy & Policy",url:"/dashboard/privacy-policy"},
+        // {name:"Our Term & Condition",url:"/dashboard/term-condition"},
+        // {name:"Our Policies", url:"/dashboard/policies"},
      ] },
   ];
 
@@ -109,24 +114,25 @@ navigate(`${child.url}`)
   return (
     <div className={`${sidebarOpen? 'w-64':'w-18'} h-screen overflow-y-auto shadow-2xl border-r border-gray-200`} style={{ backgroundColor: '#06425F' }}>
     
-      <div className="px-4 py-6 border-b border-gray-600 flex justify-between">
+      <div className="px-4 py-0 border-b border-gray-600 flex justify-between">
         <div className={` ${sidebarOpen ? 'block':'hidden'}  flex items-center space-x-3`}>
-          <div className="bg-blue-500 p-2 rounded-lg shadow-lg">
+          {/* <div className="bg-blue-500 p-2 rounded-lg shadow-lg">
             <span className="text-white font-bold text-sm">CC</span>
-          </div>
-          <div>
+          </div> */}
+          {/* <div>
             <p className="font-bold text-white text-base">Code Crafter</p>
             <p className="text-xs text-gray-300">Web Solutions</p>
-          </div>
+          </div> */}
+          <img src={img1} alt="" />
         </div>
 
-         <button
+         {/* <button
             onClick={handlesidebar}
             className="p-2 rounded-lg bg-gray-100 text-gray-600 transition-all duration-200 hover:scale-105"
             aria-label="Toggle Sidebar"
           >
             <Menu size={22} />
-          </button>
+          </button> */}
       </div>
 
       {/* Navigation */}
@@ -135,7 +141,7 @@ navigate(`${child.url}`)
           <div key={item.name} className="mb-1">
             <div
               className={`
-                flex items-center px-4 py-2.5 rounded-lg cursor-pointer
+                flex items-center px-4 py-2 rounded-lg cursor-pointer
                 transition-all duration-200 group
                 ${currentPage === item.name 
                   ? 'bg-white bg-opacity-80 shadow-lg text-black' 

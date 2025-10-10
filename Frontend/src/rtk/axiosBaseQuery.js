@@ -4,18 +4,14 @@ const backend_url = import.meta.env.VITE_BACKEND_URL
 
 
 export const axiosInstance = axios.create({
-  baseURL: "http://localhost:6002/api/v1/",
+  baseURL: backend_url,
+  // baseURL: "https://hr-management-codecrafter-1.onrender.com/api/v1/",
   headers: {
     "Content-Type": "application/json",
     "x-api-key": "ayush_don_123",
   },
-
-  // baseURL: backend_url || "http://localhost:6002/api/v1",
-  // baseURL: backend_url || "https://hr-management-codecrafter-1.onrender.com/api/v1",
-  withCredentials: true, 
-
   withCredentials: true,
-
+    credentials: 'include', // ✅ Required to send cookies
 });
 const axiosBaseQuery = async ({ url, method, data }) => {
   try {
@@ -32,8 +28,7 @@ const axiosBaseQuery = async ({ url, method, data }) => {
   : { data }),
     });
 
-    console.log("gandu hu mai yrr",response);
-    
+   
 
     if (response?.data?.message) {
       // toast.success(response.data.message);

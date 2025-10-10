@@ -34,7 +34,7 @@ export const leaveApi = createApi({
     }),
 
     ApproveLeave: builder.mutation({
-      query: ({id}) => ({
+      query: ({ id }) => ({
         url: `leave/aproved/${id}`,
         method: "PUT",
       }),
@@ -42,7 +42,7 @@ export const leaveApi = createApi({
     }),
 
     RejectLeave: builder.mutation({
-      query: ({id}) => ({
+      query: ({ id }) => ({
         url: `leave/reject/${id}`,
         method: "PUT",
       }),
@@ -52,6 +52,14 @@ export const leaveApi = createApi({
     getLeaveDetail: builder.query({
       query: () => ({
         url: "/leave/all/detal",
+        method: "GET",
+      }),
+      providesTags: ["leave"],
+    }),
+
+    getLeaveToday: builder.query({
+      query: () => ({
+        url: "/leave/today",
         method: "GET",
       }),
       providesTags: ["leave"],
@@ -74,13 +82,13 @@ export const leaveApi = createApi({
     }),
 
     getLeave: builder.query({
-      query: ({id , range}) => ({
+      query: ({ id, range }) => ({
         url: `/leave/get/myleave/${id}?${range}`,
         method: "GET",
       }),
       providesTags: ["employeeleave"],
     }),
-   
+
   }),
 });
 
@@ -93,5 +101,6 @@ export const {
   useApproveLeaveMutation,
   useGetAllLeaveQuery,
   useRejectLeaveMutation,
-  useGetLeaveQuery
+  useGetLeaveQuery,
+  useGetLeaveTodayQuery
 } = leaveApi;

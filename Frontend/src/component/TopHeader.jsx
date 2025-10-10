@@ -11,7 +11,7 @@ import {
   User,
   Wifi,
 } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useIsLoginQuery, useIsLogoutMutation } from "../rtk/login";
 import { useDispatch } from "react-redux";
@@ -23,8 +23,10 @@ import { useGetNotificationQuery } from "../rtk/notification.js";
 
 const TopHeader = () => {
   const { data: user, isLoading, Error } = useIsLoginQuery()
-  const [logoutApi, { isLoading: logOutLoading }] = useIsLogoutMutation()
+  const [logoutApi, { isLoading: logOutLoading }] = useIsLogoutMutation();
+  const { refetch } = useIsLoginQuery(); // 👈 use this separately
   const { data: notificationData } = useGetNotificationQuery();
+  const profileRef = useRef(null);
   const dispatch = useDispatch()
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
@@ -58,6 +60,24 @@ const TopHeader = () => {
     return `${hrs}:${mins}:${secs}`;
   };
 
+    useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setProfileMenuOpen(false);
+      }
+    };
+
+    // Add event listener if menu is open
+    if (profileMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    // Cleanup event listener
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [profileMenuOpen]);
+
   const getInitials = () => {
     if (user?.name) {
       return `${user?.name[0]}`;
@@ -68,19 +88,25 @@ const TopHeader = () => {
   const unreadCount = notificationData?.filter(n => !n.isRead).length;
 
   const handleLogOut = async () => {
+      console.log("logout");
     try {
-      await logoutApi().unwrap();
-      dispatch(logiDetail.util.resetApiState());
-      setUser(null);
+      await logoutApi().unwrap(); // backend clears cookie
+
+      await refetch(); // 👈 force recheck login status
+
       localStorage.removeItem("userData");
-      navigate("/");
-      console.log("chal rha hai")
+      // Optionally clear any other global auth state
+      // setUser(null); ✅ if you're using context or redux
+
       toast.success("Logout successful!");
+      window.location.reload();
+      navigate("/", { replace: true });
     } catch (err) {
-      toast.error(err.message || "Logout Failed. Please try again.");
       console.error("Logout failed", err);
+      toast.error(err?.message || "Logout Failed. Please try again.");
     }
   };
+
 
   function formateTime(isoString) {
     const date = new Date(isoString);
@@ -97,36 +123,21 @@ const TopHeader = () => {
 
 
   console.log(notificationData);
-  
+
 
   return (
     <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
       <div className="flex justify-between items-center px-4 lg:px-6 py-3">
         {/* Left Section */}
         <div className="flex items-center space-x-4">
-                    <div className="hidden lg:flex items-center space-x-2 bg-gray-50 rounded-lg px-3 py-2">
+          <div className="hidden lg:flex items-center space-x-2 bg-gray-50 rounded-lg px-3 py-2">
             <div className="flex items-center space-x-1">
               <Wifi size={24} className={isOnline ? "text-green-500" : "text-red-500"} />
               <span className="text-xs font-medium text-gray-600">
                 {isOnline ? "Active" : "Offline"}
               </span>
             </div>
-      
           </div>
-
-          {/* 
-          <div className="hidden md:block">
-            <h1 className="text-xl font-bold text-gray-800 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text ">
-              Dashboard
-            </h1>
-            <p className="text-xs text-gray-500 mt-0.5">
-              {currentTime.toLocaleDateString('en-US', {
-                weekday: 'long',
-                month: 'short',
-                day: 'numeric'
-              })}
-            </p>
-          </div> */}
         </div>
 
         {/* Center Section - Check In/Out (Employee Only) */}
@@ -186,6 +197,7 @@ const TopHeader = () => {
 
             {/* Notifications */}
             <div className="relative">
+               
               <button
                 onClick={() => setNotificationOpen(!notificationOpen)}
                 className="p-2.5 rounded-lg hover:bg-gray-100 text-gray-600 transition-all duration-200 hover:scale-105 relative group"
@@ -246,7 +258,7 @@ const TopHeader = () => {
           </div>
 
           {/* Profile Menu */}
-          <div className="relative">
+          <div className="relative" ref={profileRef}>
             <button
               onClick={() => setProfileMenuOpen(!profileMenuOpen)}
               className="flex items-center hover:bg-gray-50 rounded-xl py-2 pl-3 pr-4 border border-transparent hover:border-gray-200 transition-all duration-200 hover:shadow-sm"
@@ -290,41 +302,42 @@ const TopHeader = () => {
                     </div>
                   </div>
                 </div> */}
-                {user.role === 'Admin' && (
+                {user?.role === 'Admin' && (
                   <div className="py-2">
                     {/* My Profile */}
-                    <a
-                      href="/profile"
-                      className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    <button
+                      onClick={() => {
+                        navigate("/dashboard/about");
+                        setProfileMenuOpen(false);
+                      }}
+                      className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors w-full text-left"
                     >
-                      <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
-                        <User size={16} className="text-blue-600" />
+                      <div className="w-8 h-8 bg-green-400 rounded-lg flex items-center justify-center mr-3">
+                        <User size={16} className="text-white" />
                       </div>
                       <div>
                         <p className="font-medium">My Profile</p>
                         <p className="text-xs text-gray-500">View your profile details</p>
                       </div>
-                    </a>
+                    </button>
 
-                    {/* Edit Profile */}
-                    <a
-                      href="/profile/edit"
-                      className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    <button
+                      onClick={() => {
+                        navigate("/dashboard/about");
+                        setProfileMenuOpen(false);
+                      }}
+                      className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors w-full text-left"
                     >
-                      <div className="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
-                        <Settings size={16} className="text-yellow-600" />
+                      <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                        <User size={16} className="text-blue-600" />
                       </div>
                       <div>
                         <p className="font-medium">Edit Profile</p>
                         <p className="text-xs text-gray-500">Change your profile information</p>
                       </div>
-                    </a>
+                    </button>
                   </div>
                 )}
-
-
-
-
 
                 <div className="border-t border-gray-100">
                   <button
@@ -341,16 +354,9 @@ const TopHeader = () => {
                   </button>
                 </div>
 
-
-
               </div>
             )}
           </div>
-
-
-
-
-
         </div>
       </div>
     </header>

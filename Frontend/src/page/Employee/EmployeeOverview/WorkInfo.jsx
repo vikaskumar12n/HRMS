@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Edit, Save, X, Building, Users, Clock, MapPin, Calendar, DollarSign, User, Briefcase, UserCheck, Home } from 'lucide-react';
+import { useEmployeeWorkQuery } from '../../../rtk/attendance';
+import { useParams } from 'react-router-dom';
 
 const WorkInfo = () => {
   // Mock data for demonstration - replace with actual API calls
@@ -16,6 +18,10 @@ const WorkInfo = () => {
     joiningDate: '2023-01-15',
     salary: '75000'
   });
+
+    const { id } = useParams();
+
+
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -25,20 +31,25 @@ const WorkInfo = () => {
   const [workInfo, setWorkInfo] = useState({});
   const [formData, setFormData] = useState({});
 
+    const {data, isLoading:isWorkLoading, errorLisWorkEroor } = useEmployeeWorkQuery(id);
+
+    
+    
+
   useEffect(() => {
     if (workData) {
       const workDetails = {
-        department: workData?.department || 'N/A',
-        jobPosition: workData?.jobPosition || 'N/A',
-        shiftInformation: workData?.shiftInformation || 'N/A',
-        workType: workData?.workType || 'N/A',
-        employeeType: workData?.employeeType || 'N/A',
-        reportingManager: workData?.reportingManager || 'N/A',
-        company: workData?.company || 'N/A',
-        workLocation: workData?.workLocation || 'N/A',
-        endDate: workData?.endDate || 'N/A',
-        joiningDate: workData?.joiningDate ? formatDate(workData.joiningDate) : 'N/A',
-        salary: workData?.salary || 'N/A'
+        department: data?.department || '',
+        jobPosition: data?.jobPosition || '',
+        shiftInformation: data?.shiftInformation || '',
+        workType: data?.workType || '',
+        employeeType: data?.employeeType || '',
+        reportingManager: data?.reportingManager || '',
+        company: data?.company || '',
+        workLocation: data?.workLocation || '',
+        endDate: data?.endDate || '',
+        joiningDate: data?.joiningDate ? formatDate(workData.joiningDate) : '',
+        salary: data?.salary || ''
       };
       setWorkInfo(workDetails);
       setFormData(workDetails);

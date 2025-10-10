@@ -30,67 +30,74 @@ import EmployeeLayout from "./EmployeeComponents/Employee.Layout";
 import UserDashboard from './page/Home/UserDashboard';
 // import HomeDashboard from './page/Home/HomeDashboard'; // Missing import add kiya
 
+
+// In your index.js or App.js
+import 'leaflet/dist/leaflet.css';
+import Location from "./location/Location";
+import Announcement from "./page/Annoucement/Annoucment";
+import NotificationEmployee from "./page/Notification/NotificationEmployee";
+import Announcement1 from "./page/Notification/Notification";
+import PrivacyPolicy from "./page/Policy/PrivacyPolicy";
+
 const App = () => {
   return (
-    <>
-      <ToastContainer position="top-right" autoClose={3000} />
-      <Routes>
-        {/* <Route path="/home" element={<HomeDashboard />} /> */}
+<>
+  <ToastContainer position="top-right" autoClose={3000} />
+  <Routes>
 
-        <Route path="/dashboard" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="about" element={<About />} />
-          <Route path="employee/list" element={<EmployeeList />} />
-          <Route path="employee/details/:id" element={<EmployeeDetail />} />
-        </Route>
+    {/* ✅ ADMIN ROUTES (PROTECTED) */}
+    <Route element={<ProtectedAuth isPrivate={true} allowedRoles={["admin"]} />}>
+      <Route path="/dashboard" element={<Layout />}>
+        <Route index element={<Home />} />
+        <Route path="about" element={<About />} />
+        <Route path="privacy-policy" element={<PrivacyPolicy/>}/>
+        <Route path="employee/list" element={<EmployeeList />} />
+        <Route path="employee/details/:id" element={<EmployeeDetail />} />
+        <Route path="employee/overview/:id" element={<EmployeeOverview />} />
+        <Route path="employee/edit/:id" element={<EmployeeAdd />} />
+        <Route path="employee/add" element={<EmployeeAdd />} />
+        <Route path="employee/policy" element={<Policy />} />
+        <Route path="employee/add/policy" element={<EmployeeAddPolicy />} />
+        <Route path="attendance/logs" element={<AttendanceLogs />} />
+        <Route path="attendance/rules" element={<AttendanceRules />} />
+        <Route path="employee/location" element={<Location />} />
+        <Route path="attendance/employee" element={<EmployeeAttendance />} />
+        <Route path="leave/logs" element={<LeaveLogs />} />
+        <Route path="leave/rules" element={<LeaveRules />} />
+        <Route path="onboarding" element={<Onboarding />} />
+        <Route path="recruitment" element={<Recruitment />} />
+        <Route path="payroll" element={<Payroll />} />
+        <Route path="notification" element={<NotificationEmployee/>} />
+        <Route path="announcement" element={<Announcement />} />
+      </Route>
+    </Route>
 
-        <Route element={<ProtectedAuth isPrivate={true} allowedRoles={["admin"]} />}>
-          <Route path="/dashboard" element={<Layout />}>
-            <Route index element={<Home />} />
-            <Route path="about" element={<About />} />
-            <Route path="employee/list" element={<EmployeeList />} />
-            <Route path="employee/details/:id" element={<EmployeeDetail />} />
-            <Route path="employee/overview/:id" element={<EmployeeOverview />} />
-            <Route path="employee/edit/:id" element={<EmployeeAdd />} />
-            <Route path="employee/add" element={<EmployeeAdd />} />
-            <Route path="employee/policy" element={<Policy />} />
-            <Route path="employee/add/policy" element={<EmployeeAddPolicy />} />
-            <Route path="attendance/logs" element={<AttendanceLogs />} />
-            <Route path="attendance/rules" element={<AttendanceRules />} />
-            <Route path="attendance/employee" element={<EmployeeAttendance />} />
-            <Route path="leave/logs" element={<LeaveLogs />} />
-            <Route path="leave/rules" element={<LeaveRules />} />
-            <Route path="onboarding" element={<Onboarding />} />
-            <Route path="recruitment" element={<Recruitment />} />
-            <Route path="payroll" element={<Payroll />} />
-            <Route path="notification" element={<Notification />} />
-            {/* <Route path="policies" element={<GetPolicy />} />
-            <Route path="add/policies" element={<EmployeeAddPolicy />} /> */}
-            {/* <Route path="term-condition" element={<TermCondition />} />
-            <Route path="add/term-condition" element={<EmployeeAddTerm />} /> */}s
-          </Route>
-        </Route>
+    {/* ✅ EMPLOYEE ROUTES (PROTECTED) */}
+    <Route element={<ProtectedAuth isPrivate={true} allowedRoles={["employee"]} />}>
+      <Route path="/employee/dashboard" element={<EmployeeLayout />}>
+        <Route index element={<UserDashboard />} />
+        <Route path="employee/overview/:id" element={<EmployeeOverview basePath='/employee/dashboard' />} />
+        <Route path="announcement" element={<Announcement1 basePath='/employee/dashboard' />} />
+        <Route path="employee/edit/:id" element={<EmployeeAdd basePath='/employee/dashboard' />} />
+        <Route path="policies" element={<Policies />} />
+        <Route path="term-condition" element={<TermCondition />} />
+        <Route path="about" element={<About />} />
+        <Route path="privacy-policy" element={<PrivacyPolicy/>}/>
+         <Route path="announcement" element={<Announcement1/>} />
+      </Route>
+    </Route>
 
-        <Route element={<ProtectedAuth isPrivate={true} allowedRoles={["employee"]} />}>
-          <Route path='/employee/dashboard' element={<EmployeeLayout />}>
-            <Route index element={<UserDashboard />} />
-            <Route path='employee/overview/:id' element={<EmployeeOverview basePath='/employee/dashboard' />} />
-            <Route path='notification' element={<Notification basePath='/employee/dashboard' />} />
-            <Route path="employee/edit/:id" element={<EmployeeAdd basePath='/employee/dashboard' />} />
-            <Route path="policies" element={<Policies />} />
-            <Route path="term-condition" element={<TermCondition />} />
-            <Route path="about" element={<About />} />
-          </Route>
-        </Route>
+    {/* ✅ PUBLIC ROUTES */}
+    <Route element={<ProtectedAuth isPrivate={false} />}>
+      <Route path="/" element={<AuthLogin />} />
+      <Route path="privacy-policy" element={<PrivacyPolicy/>}/>
+    </Route>
 
-        <Route element={<ProtectedAuth isPrivate={false} />}>
-          <Route path="/" element={<AuthLogin />} />
-        </Route>
+    <Route path="/unauthorized" element={<Unauthorized />} />
+    <Route path="*" element={<Navigate to="/" replace />} />
+  </Routes>
+</>
 
-        <Route path="/unauthorized" element={<Unauthorized />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </>
   );
 };
 

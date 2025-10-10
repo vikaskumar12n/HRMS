@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { ChevronDown, User2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners';
 import { toast } from 'react-toastify';
+import Location from '../../location/Location';
 
 const TableView = ({ attendanceData, isLoading, searchTerm, showEntries }) => {
   const [selectedDepartment, setSelectedDepartment] = useState('');
@@ -11,6 +12,8 @@ const TableView = ({ attendanceData, isLoading, searchTerm, showEntries }) => {
   const [selectedManager, setSelectedManager] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
   const [sortBy, setSortBy] = useState('');
+
+  const navigate=useNavigate()
 
   // Filter and search logic
   const filteredData = useMemo(() => {
@@ -143,12 +146,14 @@ function viewLocation(latitude, longitude) {
 }
 
 
+console.log("1-",attendanceData);
 
-console.log("bc is ",attendanceData);
+
+
 
 
   return (
-    <div className="bg-white rounded-lg">
+    <div className="bg-white rounded-lg  w-[80vw]">
       {/* Filters */}
       <div className="p-4 border-b border-gray-200">
         <div className="flex flex-wrap gap-4 mb-4">
@@ -254,6 +259,7 @@ console.log("bc is ",attendanceData);
               <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Check Out</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Work Duration</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Check In Location</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Location</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -261,7 +267,7 @@ console.log("bc is ",attendanceData);
             {paginatedData.map((employee, i) => (
               <tr key={employee._id} className="hover:bg-gray-50">
                 <td className="px-4 py-3 text-sm overflow-ellipsis text-gray-900">
-                  {employee._id.slice(-5)}
+                  {employee?.employee?.empId}
                 </td>
                 <td className="px-4 py-3">
                   <Link to={`/dashboard/employee/overview/${employee?.employeeId}`} className="flex items-center">
@@ -278,10 +284,14 @@ console.log("bc is ",attendanceData);
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-900">{formatTime(employee?.checkIn) || '--'}</td>
                 <td className="px-4 py-3 text-sm text-gray-900">{formatTime(employee?.checkOutTime) || '--'}</td>
-                <td className="px-4 py-3 text-sm text-gray-900">{employee?.workDuration || '--'}</td>
+                <td className="px-4 py-3 text-sm text-gray-900">{employee.workDuration || '--'}</td>
                 <td className="px-4 py-3 text-sm text-blue-600 cursor-pointer hover:underline"
-                onClick={()=>viewLocation(employee?.location?.coordinates[0],employee?.location?.coordinates[1])}
+                // onClick={()=>Location(employee?.location?.coordinates[0],employee?.location?.coordinates[1])}ia
+                onClick={()=>navigate("/dashboard/employee/location",{state:{lat:employee?.location?.coordinates[0],lng:employee?.location?.coordinates[1]}})}
+                
                 >View Map</td>
+                   <td className="px-4 py-3 text-sm text-gray-900">{employee?.location?.name || '--'}</td>
+               
               </tr>
             ))}
           </tbody>

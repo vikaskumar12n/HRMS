@@ -158,7 +158,7 @@ const CalendarView = ({ currentDate, setCurrentDate, searchTerm, setSearchTerm }
       <div className="p-6 border-b border-gray-200">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-4">
-            <div className="relative">
+            {/* <div className="relative">
               <input
                 type="text"
                 placeholder="Search employees..."
@@ -167,7 +167,7 @@ const CalendarView = ({ currentDate, setCurrentDate, searchTerm, setSearchTerm }
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
               <Search className="h-4 w-4 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
-            </div>
+            </div> */}
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">

@@ -5,13 +5,15 @@ import { Eye, EyeOff, Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
 import { useUserContext } from "../UseContext/useContext";
 import { toast } from "react-toastify";
 
+import logo from '../../assets/clogo.png'
+
 const AuthLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [data, setData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
   const [loginApi, { isLoading: LoginLoading }] = useLoginApiMutation();
-  const { data: isLoginData, isLoading ,refetch } = useIsLoginQuery();
-  const { setUser} = useUserContext();
+  const { data: isLoginData, isLoading, refetch } = useIsLoginQuery();
+  const { setUser } = useUserContext();
 
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
@@ -22,38 +24,39 @@ const AuthLogin = () => {
       const response = await loginApi(data).unwrap();
       if (response.success) {
         toast.success("Login successful!");
-          setUser(response)
-          localStorage.clear();
-          localStorage.setItem('userData',JSON.stringify(response))
+        setUser(response)
+        localStorage.clear();
+        localStorage.setItem('userData', JSON.stringify(response))
         const role = response?.data?.role?.toLowerCase();
-        if (role === "admin") {
-          navigate("/dashboard");
-        } else if (role === "employee") {
-          navigate("/employee/dashboard");
-        }
+        window.location.href = role === "admin" ? "/dashboard" : "/employee/dashboard";
+        // if (role === "admin") {
+        //   navigate("/dashboard");
+        // } else if (role === "employee") {
+        //   navigate("/employee/dashboard");
+        // }
       }
     } catch (error) {
       toast.error(error.message || "Login Failed. Please try again.");
     }
   };
 
- useEffect(() => {
-  const checkLogin = async () => {
-    const result = await refetch();
-    if (result?.isSuccess) {
-        toast.success("Login successful!");
-      const role = result.data.role.toLowerCase();
-      if (role === "admin") navigate("/dashboard");
-      if (role === "employee") navigate("/employee/dashboard");
-    }
-  };
+  //  useEffect(() => {
+  //   const checkLogin = async () => {
+  //     const result = await refetch();
+  //     if (result?.isSuccess) {
+  //         toast.success("Login successful!");
+  //       const role = result.data.role.toLowerCase();
+  //       if (role === "admin") navigate("/dashboard");
+  //       if (role === "employee") navigate("/employee/dashboard");
+  //     }
+  //   };
 
-  checkLogin();
-}, [refetch, navigate]);
+  //   checkLogin();
+  // }, [refetch, navigate]);
 
- 
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#f7feff] to-[#f8fafc] px-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#06425F] px-4">
       <div className="w-full max-w-md bg-white rounded-3xl shadow-lg p-8 md:p-10 border border-gray-200 transition-all">
         <div className="mb-6 text-center">
           <h1 className="text-3xl font-extrabold text-gray-800 mb-1">
@@ -127,7 +130,7 @@ const AuthLogin = () => {
             {(LoginLoading || isLoading) ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                <span> {isLoading? ' Loading..':' Signing In...'} </span>
+                <span> {isLoading ? ' Loading..' : ' Signing In...'} </span>
               </>
             ) : (
               <>
@@ -147,11 +150,12 @@ const AuthLogin = () => {
           </p>
         </div> */}
 
-        <div className="mt-8 text-center text-xs text-gray-400">
-          Developed by{" "}
-          <span className="text-[#075271] font-semibold">
-            <a href="https://codecrafter.co.in">Code Crafter Web Solutions</a>
-          </span>
+        <div className="mt-8 text-center text-xs text-gray-400 space-x-1">
+          {/* Developed by{""} */}
+          <a href="/privacy-policy" className="underline hover:text-gray-600 space-x-2 font-bold">
+            Privacy Policy
+          </a>
+          <img src={logo} alt="cc_logo" className="" />
         </div>
       </div>
     </div>

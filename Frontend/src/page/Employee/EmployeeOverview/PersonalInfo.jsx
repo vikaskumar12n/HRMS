@@ -6,8 +6,12 @@ import { useGetOneEmployeeQuery } from '../../../rtk/employeeApi.js';
 const PersonalInfo = ({ basePath = "/dashboard" }) => {
   const { id } = useParams();
   const { data, isLoading, error, refetch } = useGetOneEmployeeQuery({ id });
+
+
+
+  
   const navigate = useNavigate();
-  console.log(data)
+
   
   const [personalData, setPersonalData] = useState({
     name: '',
@@ -40,7 +44,7 @@ const PersonalInfo = ({ basePath = "/dashboard" }) => {
     if (data) {
       setPersonalData({
         name: data?.name || '',
-        dateOfBirth: data?.dateOfBirth || '--',
+        dateOfBirth: data?.dob || '--',
         gender: data?.gender || '',
         bloodGroup: data?.bloodGroup || '',
         maritalStatus: data?.maritalStatus || '',
@@ -56,7 +60,7 @@ const PersonalInfo = ({ basePath = "/dashboard" }) => {
         // Address Info  
         currentAddress: data?.address || '',
         permanentAddress: data?.permanentAddress || data?.address || '',
-        country: data?.country || '',
+        country: "India" || '',
         state: data?.state || '',
         city: data?.city || '',
         // Emergency Contact
@@ -67,14 +71,20 @@ const PersonalInfo = ({ basePath = "/dashboard" }) => {
     }
   }, [data]);
 
+
+
+
   const handlePersonalEdit = (tab) => {
-    navigate(`${basePath}/employee/edit/${id}?tab=personal`);
+    navigate(`/employee/dashboard/employee/edit/${id}?tab=personal`)
+    // employee/dashboard/employee/edit/686e3ff2086bfbb231526ed1?tab=personal
+    // navigate(`/employee/${basePath}/employee/edit/${id}?tab=personal`);
   };
 
  
 
   const handleAddressEdit = () => {
-    navigate(`${basePath}/employee/edit/${id}?tab=address`);
+    navigate(`/employee/dashboard/employee/edit/${id}?tab=address`)
+    // navigate(`${basePath}/employee/edit/${id}?tab=address`);
   };
 
   const handleRetry = () => {
@@ -224,23 +234,23 @@ const PersonalInfo = ({ basePath = "/dashboard" }) => {
            
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <InfoField label="Full Name" value={personalData.name} />
-              <InfoField label="Date of Birth" value={personalData.dateOfBirth} />
+              <InfoField label="Date of Birth" value={personalData?.dateOfBirth} />
               <InfoField label="Gender" value={personalData.gender} />
-              <InfoField label="Blood Group" value={personalData.bloodGroup} />
+              {/* <InfoField label="Blood Group" value={personalData.bloodGroup} /> */}
               <InfoField label="Marital Status" value={personalData.maritalStatus} />
-              <InfoField label="Children" value={personalData.children} />
+              {/* <InfoField label="Children" value={personalData.children} />
               <InfoField label="Qualification" value={personalData.qualification} />
-              <InfoField label="Experience" value={personalData.experience} />
+              <InfoField label="Experience" value={personalData.experience} /> */}
             </div>
           </div>
 
           {/* Contact Details */}
-          <div>
-            <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+         <div>
+            {/* <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
               <div className="w-1 h-6 bg-blue-500 rounded-full"></div>
               Contact Details
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            </h4> */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <EmailField label="Official Email ID" value={personalData.officialEmail} />
               <EmailField label="Personal Email ID" value={personalData.personalEmail} />
               <PhoneField 
@@ -248,18 +258,13 @@ const PersonalInfo = ({ basePath = "/dashboard" }) => {
                 value={personalData.phoneNumber} 
                 verified={personalData.verified} 
               />
-              <InfoField label="Alternate Phone Number" value={personalData.alternatePhone} />
             </div>
           </div>
-        </div>
-
-        {/* Address Information */}
-        <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+             <div className='pt-0'>
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-            
-                  <div className="w-1 h-6 bg-blue-500 rounded-full"></div>
-                <h3 className="text-xl font-bold text-gray-900">Address Information</h3>
+                  {/* <div className="w-1 h-6 bg-blue-500 rounded-full"></div> */}
+                {/* <h3 className="text-xl font-bold text-gray-900">Address Information</h3> */}
             </div>
             <button
               onClick={handleAddressEdit}
@@ -271,7 +276,7 @@ const PersonalInfo = ({ basePath = "/dashboard" }) => {
             </button>
           </div>
           
-          <div className="grid grid-cols-1  gap-8 mb-8">
+          <div className="grid grid-cols-1  gap-8 mb-8 pb-5">
             <div className="space-y-2">
               <h4 className="text-base font-semibold text-gray-700 flex items-center gap-2">
                 <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
@@ -302,6 +307,11 @@ const PersonalInfo = ({ basePath = "/dashboard" }) => {
             <InfoField label="City" value={personalData.city} />
           </div>
         </div>
+          
+        </div>
+
+        {/* Address Information */}
+      
 
         {/* Emergency Contact */}
         {/* <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">

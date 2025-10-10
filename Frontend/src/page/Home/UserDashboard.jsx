@@ -17,18 +17,33 @@ import { Quote, Target, Lightbulb, ArrowUpRight } from "lucide-react";
 import { useEffect } from "react";
 import { useGetAttendanceDetailQuery } from "../../rtk/attendance.js";
 import WorkingHoursChart from "../../page/WorkingHourChart/WorkingHoursCharts.jsx";
+import CalendarView from "./CalenderView.jsx";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, AreaChart, Area } from 'recharts';
 import { useUserContext } from "../UseContext/useContext.jsx";
 import { useNavigate } from "react-router-dom";
+import { useGetAllAnnouncementsQuery } from "../../rtk/announcementApi.js";
+import { useWeeklyEmployeeQuery } from "../../rtk/employeeApi.js";
 
 const Dashboard = ({ data }) => {
   const navigate = useNavigate()
   const { data: attandance, isLoading } = useGetAttendanceDetailQuery();
-      
-  const { user:userData } = useUserContext();
-  if(!userData){
+  const { data: announcementData, isLoading: announcementloading, isError: announcementError } = useGetAllAnnouncementsQuery()
+  const { user: userData } = useUserContext();
+  const userId = userData?.employeeeData?._id;
+
+  const {
+    data: weeklyData,
+    isLoading: isWeeklyLoading,
+    isError: isWeeklyWError,
+  } = useWeeklyEmployeeQuery({ id: userId }, {
+    skip: !userId, // Skip if no ID
+  });
+
+
+  if (!userData) {
     navigate('/')
   }
+
   const [notices] = useState([
     {
       id: 1,
@@ -63,7 +78,7 @@ const Dashboard = ({ data }) => {
     absent: 5,
     leave: 3,
   });
-  
+
   useEffect(() => {
     if (data?.id) {
       // setEmployeeId(data.id);
@@ -78,7 +93,7 @@ const Dashboard = ({ data }) => {
       });
     }
   }, [data]);
-  
+
   // Performance score data (mock)
   const [performanceData] = useState([
     { month: 'Jan', score: 85 },
@@ -87,7 +102,7 @@ const Dashboard = ({ data }) => {
     { month: 'Apr', score: 91 },
     { month: 'May', score: 90 },
   ]);
-  
+
   // Productivity by time of day (mock)
   const [productivityData] = useState([
     { time: '9 AM', productivity: 65 },
@@ -100,7 +115,7 @@ const Dashboard = ({ data }) => {
     { time: '4 PM', productivity: 78 },
     { time: '5 PM', productivity: 72 },
   ]);
-  
+
   // Weekly work hours (mock)
   const [weeklyHoursData] = useState([
     { day: 'Mon', hours: 8.5 },
@@ -147,14 +162,14 @@ const Dashboard = ({ data }) => {
     quote: "Success is not final, failure is not fatal: It is the courage to continue that counts.",
     author: "Winston Churchill"
   });
-  
+
   // Add this for a new KPI visualization
   const [keyMetrics] = useState([
     { name: 'Tasks Completed', value: 87, target: 100, icon: <Target className="text-purple-500" size={20} />, color: 'bg-purple-100' },
     { name: 'Meetings Attended', value: 24, target: 30, icon: <MessageSquare className="text-blue-500" size={20} />, color: 'bg-blue-100' },
     { name: 'Efficiency Score', value: 92, target: 95, icon: <Activity className="text-green-500" size={20} />, color: 'bg-green-100' },
   ]);
-  
+
 
   const mapAttendanceStatus = (attendanceArray) => {
     return attendanceArray.map((record) => {
@@ -174,14 +189,18 @@ const Dashboard = ({ data }) => {
     });
   };
 
+
+
   const rawData = attandance?.attandanceData || [];
   const mapped = mapAttendanceStatus(rawData);
   const attendanceData = groupByMonthYear(mapped);
 
+
+
   const calculateStats = () => {
     let present = 0;
     let absent = 0;
-    let leave = 0;
+    // let leave = 0;
     let total = 0;
 
     attandance?.attandanceData.forEach((month) => {
@@ -191,18 +210,22 @@ const Dashboard = ({ data }) => {
       else if (month.status === "status") leave++;
     });
 
-    return { present, absent, leave, total };
+    return { present, absent, total };
   };
 
   const stats = calculateStats();
-  
+
   // Data for attendance pie chart
   const attendancePieData = [
     { name: 'Present', value: stats.present, color: '#10B981' },
     { name: 'Absent', value: stats.absent, color: '#EF4444' },
-    { name: 'Leave', value: stats.leave, color: '#F59E0B' },
+    // { name: 'Leave', value: stats.leave, color: '#F59E0B' },
   ];
-console.log(userData)
+
+
+
+  
+
   return (
     <div className="min-h-screen bg-gray-100 p-4">
       <div className="max-w-7xl mx-auto">
@@ -216,7 +239,7 @@ console.log(userData)
               <div>
                 <h1 className="text-2xl font-bold text-gray-800">{userData?.employeeeData.name}</h1>
                 <p className="text-gray-500">
-                  ID: {userData?.employeeeData?._id || 'N/A'} • {userData?.department} • {userData?.phone_Number}
+                  ID: {userData?.employeeeData?.empId || 'N/A'} • {userData?.employeeeData?.workEmail} • {userData?.employeeeData?.mobile}
                 </p>
               </div>
             </div>
@@ -226,11 +249,11 @@ console.log(userData)
               </div>
             </div>
           </div>
-          
+
         </div>
 
 
-        
+
 
         {/* Dashboard Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -269,7 +292,7 @@ console.log(userData)
                 </div>
               </div>
             </div>
-            <div className="bg-white rounded-lg shadow p-4 flex items-center">
+            {/* <div className="bg-white rounded-lg shadow p-4 flex items-center">
               <div className="bg-yellow-100 p-3 rounded-full mr-4">
                 <CalendarIcon size={24} className="text-yellow-600" />
               </div>
@@ -280,7 +303,7 @@ console.log(userData)
                   {((stats.leave / stats.total) * 100).toFixed(1)}%
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
 
           <div className="lg:col-span-6">
@@ -322,17 +345,14 @@ console.log(userData)
                 <BarChartIcon className="text-blue-600 mr-2" />
                 <h2 className="text-lg font-semibold">Weekly Working Hours</h2>
               </div>
-              <div className="p-4 h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={weeklyHoursData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f5" />
-                    <XAxis dataKey="day" />
-                    <YAxis domain={[0, 10]} />
-                    <Tooltip />
-                    <Bar dataKey="hours" fill="#10B981" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
+              <BarChart data={weeklyData} width={500} height={300}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f5" />
+                <XAxis dataKey="name" />
+                <YAxis domain={[0, 10]} />
+                <Tooltip />
+                <Bar dataKey="present" fill="#10B981" radius={[4, 4, 0, 0]} />
+              </BarChart>
+
             </div>
           </div>
 
@@ -345,36 +365,40 @@ console.log(userData)
                   <h2 className="text-lg font-semibold">Notice Board</h2>
                 </div>
                 <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-medium">
-                  {notices.length} New
+                  {Array.isArray(announcementData) && announcementData.length} New
                 </span>
               </div>
               <div className="p-4">
-                {notices.length > 0 ? (
+                {Array.isArray(announcementData) && announcementData.length > 0 ? (
                   <div className="space-y-4">
-                    {notices.map((notice) => (
+                    {announcementData.map((notice) => (
                       <div
-                        key={notice.id}
+                        key={notice?._id}
                         className="border-l-4 p-4 bg-gray-50 rounded shadow-sm hover:shadow transition-all duration-200"
                         style={{
                           borderColor:
-                            notice.priority === "high"
+                            true === "high"
                               ? "#ef4444"
                               : notice.priority === "medium"
-                              ? "#f59e0b"
-                              : "#10b981",
+                                ? "#f59e0b"
+                                : "#10b981",
                         }}
                       >
                         <div className="flex justify-between items-start">
                           <h3 className="font-medium text-gray-900">
-                            {notice.title}
+                            {notice?.message}
                           </h3>
                           <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                            {notice.date}
+                            {new Date(notice?.updatedAt).toLocaleTimeString([], {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              hour12: true,
+                            })}
                           </span>
                         </div>
-                        <p className="text-gray-600 mt-2 text-sm">
+                        {/* <p className="text-gray-600 mt-2 text-sm">
                           {notice.content}
-                        </p>
+                        </p> */}
                       </div>
                     ))}
                   </div>
@@ -395,7 +419,7 @@ console.log(userData)
 
           {/* Attendance Calendar */}
           <div className="lg:col-span-4">
-            <div className="bg-white rounded-lg shadow h-full">
+            {/* <div className="bg-white rounded-lg shadow h-full">
               <div className="border-b border-gray-200 p-4 flex items-center">
                 <Calendar className="text-blue-600 mr-2" />
                 <h2 className="text-lg font-semibold">Monthly Attendance</h2>
@@ -416,7 +440,7 @@ console.log(userData)
                         </div>
                       ))}
 
-                      {/* Empty cells for correct day alignment */}
+                
                       {Array.from({
                         length:
                           new Date(
@@ -428,7 +452,6 @@ console.log(userData)
                         <div key={`empty-${i}`} className="p-1"></div>
                       ))}
 
-                      {/* Days */}
                       {Array.from({
                         length: new Date(
                           month.year,
@@ -439,7 +462,7 @@ console.log(userData)
                         const day = i + 1;
                         const dayData = month.days.find((d) => d.day === day);
 
-                        let bgColor = "bg-gray-100"; // Default color for weekends or no data
+                        let bgColor = "bg-gray-100"; 
                         let textColor = "text-gray-400";
                         let icon = null;
 
@@ -502,8 +525,12 @@ console.log(userData)
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
+            <CalendarView attendanceData={attendanceData} />
           </div>
+
+
+
         </div>
       </div>
     </div>

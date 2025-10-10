@@ -231,7 +231,7 @@ const handleDownloadSlip = async () => {
             </div>
           </div>
           
-          <div className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(salaryDetail.status)}`}>
+          {/* <div className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(salaryDetail.status)}`}>
             <div className="flex items-center gap-1 text-current">
               {salaryDetail.status === 'Paid' ? 
                 <CheckCircle className="h-3 w-3" /> : 
@@ -239,7 +239,7 @@ const handleDownloadSlip = async () => {
               }
               {salaryDetail.status}
             </div>
-          </div>
+          </div> */}
         </div>
         
         <div className="text-3xl font-bold mb-2">
@@ -292,7 +292,7 @@ const handleDownloadSlip = async () => {
         <div className="bg-white rounded-lg border border-gray-100 p-4 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 mb-1">Absent Days</p>
+              <p className="text-sm text-gray-600 mb-1">Not Present  Days</p>
               <p className="text-2xl font-bold text-red-600">{salaryDetail.absentDays || 0}</p>
             </div>
             <div className="bg-red-50 p-3 rounded-lg">
@@ -326,7 +326,7 @@ const handleDownloadSlip = async () => {
           </div>
           
           <div className="flex justify-between items-center py-2 border-b border-gray-50">
-            <span className="text-gray-600">Deductions (Absent Days)</span>
+            <span className="text-gray-600">Not Present Days</span>
             <span className="font-semibold text-red-600">
               -₹{(parseInt(salaryDetail.salary || 0) - parseInt(salaryDetail.estimate_salary || 0)).toLocaleString()}
             </span>

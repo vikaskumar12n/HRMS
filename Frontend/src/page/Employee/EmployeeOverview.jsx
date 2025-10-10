@@ -39,6 +39,10 @@ const navigate = useNavigate()
     { name: 'Attendance System', status: 'Planning', role: 'Backend Developer', completion: 25 }
   ];
 
+
+  
+  
+
  
   const tabs = [
     { id: 'personal', label: 'Personal', icon: User },

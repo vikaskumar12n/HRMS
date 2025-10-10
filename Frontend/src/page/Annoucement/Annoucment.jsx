@@ -16,8 +16,8 @@ import {
   useUpdateAnnouncementMutation,
 } from '../../rtk/announcementApi';
 
-const Announcement1 = () => {
-  const topRef = useRef(null);
+const Announcement = () => {
+  const topRef = useRef(null); // ✅ Add ref
 
   const { data: announcements, isLoading } = useGetAllAnnouncementsQuery();
   const [addAnnouncement, { isLoading: isAdding }] = useAddAnnouncementMutation();
@@ -63,6 +63,7 @@ const Announcement1 = () => {
     setEditingId(announcement._id);
     setShowForm(true);
 
+    // ✅ Scroll to top reliably
     setTimeout(() => {
       topRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, 50);
@@ -103,31 +104,26 @@ const Announcement1 = () => {
   }
 
   return (
-    <div ref={topRef} className="max-w-6xl mx-auto p-6 bg-gray-50 min-h-screen">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Announcements</h1>
-        <p className="text-gray-600">Stay updated with the latest announcements and notices</p>
+    <div ref={topRef} className="max-w-6xl mx-auto p-6"> {/* ✅ Attach ref here */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">Announcements</h1>
+        <button
+          onClick={() => setShowForm(true)}
+          className="flex items-center bg-[#06425F] text-white px-4 py-2 rounded-md hover:bg-[#04364b] transition"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Add Announcement
+        </button>
       </div>
 
-      {/* Form */}
       {showForm && (
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-8">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-semibold text-gray-900">
-              {editingId ? 'Edit Announcement' : 'Add New Announcement'}
-            </h2>
-            <button
-              onClick={handleCancel}
-              className="text-gray-500 hover:text-gray-700 p-2 hover:bg-gray-100 rounded-full transition"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="bg-white border rounded-lg p-6 mb-6 shadow-sm">
+          <h2 className="text-lg font-semibold mb-4">
+            {editingId ? 'Edit Announcement' : 'Add New Announcement'}
+          </h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Message
               </label>
               <textarea
@@ -135,17 +131,16 @@ const Announcement1 = () => {
                 value={formData.message}
                 onChange={handleInputChange}
                 rows="4"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#06425F] focus:border-[#06425F] transition-colors resize-none"
-                placeholder="Enter your announcement message"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#06425F]"
                 required
               />
             </div>
 
-            <div className="flex gap-4 pt-4">
+            <div className="flex gap-3">
               <button
                 type="submit"
                 disabled={isAdding || isUpdating}
-                className="flex items-center bg-[#06425F] text-white px-6 py-3 rounded-lg hover:bg-[#04364b] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+                className="flex items-center bg-[#06425F] text-white px-4 py-2 rounded-md hover:bg-[#04364b] transition disabled:opacity-50"
               >
                 {(isAdding || isUpdating) ? (
                   <ClipLoader size={16} color="white" className="mr-2" />
@@ -154,44 +149,50 @@ const Announcement1 = () => {
                 )}
                 {editingId ? 'Update' : 'Save'}
               </button>
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="flex items-center bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition"
+              >
+                <X className="w-4 h-4 mr-2" />
+                Cancel
+              </button>
             </div>
           </form>
         </div>
       )}
 
-      {/* Announcements List */}
-      <div className="space-y-6">
+      <div className="space-y-4">
         {announcements && announcements.length > 0 ? (
           announcements.map((announcement) => (
-            <div key={announcement.id} className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300">
-              <div className="flex justify-between items-start mb-4">
+            <div key={announcement.id} className="bg-white border rounded-lg p-6 shadow-sm">
+              <div className="flex justify-between items-start mb-3">
                 <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800 border border-blue-200">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className={`px-2 py-1 text-xs rounded-full border`}>
                       {announcement.message?.toUpperCase()}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                  <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
                     {announcement.createdAt && (
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
-                        <span>{formatDate(announcement.createdAt)}</span>
+                        {formatDate(announcement.createdAt)}
                       </div>
                     )}
                   </div>
                 </div>
 
                 <div className="flex gap-2">
-                  {/* Edit and Delete buttons are commented out as in original */}
-                  {/* <button
+                  <button
                     onClick={() => handleEdit(announcement)}
                     className="p-2 text-green-600 hover:bg-green-50 rounded-md transition"
                     title="Edit"
                   >
                     <Edit className="w-4 h-4" />
-                  </button> */}
-                  {/* <button
+                  </button>
+                  <button
                     onClick={() => handleDelete(announcement._id)}
                     disabled={isDeleting}
                     className="p-2 text-red-600 hover:bg-red-50 rounded-md transition disabled:opacity-50"
@@ -202,16 +203,16 @@ const Announcement1 = () => {
                     ) : (
                       <Trash2 className="w-4 h-4" />
                     )}
-                  </button> */}
+                  </button>
                 </div>
               </div>
 
-              <div className={`text-gray-700 leading-relaxed ${viewingId === announcement.id ? '' : 'line-clamp-2'}`}>
+              <div className={`text-gray-700 ${viewingId === announcement.id ? '' : 'line-clamp-2'}`}>
                 {announcement.content}
               </div>
 
               {viewingId === announcement.id && announcement.content && (
-                <div className="mt-4 p-4 bg-gray-50 rounded-lg border-l-4 border-[#06425F]">
+                <div className="mt-4 p-4 bg-gray-50 rounded-md">
                   <div className="flex items-center gap-2 mb-2">
                     <MessageSquare className="w-4 h-4 text-gray-600" />
                     <span className="text-sm font-medium text-gray-700">Full Content:</span>
@@ -222,10 +223,10 @@ const Announcement1 = () => {
             </div>
           ))
         ) : (
-          <div className="text-center py-16 bg-white rounded-xl shadow-lg border border-gray-200">
-            <MessageSquare className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No announcements found</h3>
-            <p className="text-gray-500 mb-6">Create your first announcement to get started</p>
+          <div className="text-center py-12">
+            <MessageSquare className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-500 text-lg">No announcements found</p>
+            <p className="text-gray-400 text-sm">Create your first announcement to get started</p>
           </div>
         )}
       </div>
@@ -233,4 +234,4 @@ const Announcement1 = () => {
   );
 };
 
-export default Announcement1;
+export default Announcement;

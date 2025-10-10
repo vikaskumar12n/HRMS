@@ -8,15 +8,15 @@ export const attendanceDetailApi = createApi({
 
   endpoints: (builder) => ({
     employeeCheckIn: builder.mutation({
-      query: ({payload , id}) => ({
+      query: ({ payload, id }) => ({
         url: `employee/attendance/checkIn/${id}`,
         method: "POST",
-        data:payload
+        data: payload
       }),
       invalidatesTags: ["attendance"],
     }),
     employeeChekOut: builder.mutation({
-      query: ({id}) => (
+      query: ({ id }) => (
         console.log("rtk"),
         {
           url: `employee/attendance/checkout/${id}`,
@@ -34,17 +34,17 @@ export const attendanceDetailApi = createApi({
       providesTags: ["attendance"],
     }),
 
-    getWeeklayChar:builder.query({
-            query:()=>({
-              url:"/employee/attendance/weekly/attendance/chart",
-              method:"GET",
-            }),
-            providesTags:["attendance"],
+    getWeeklayChar: builder.query({
+      query: () => ({
+        url: "/employee/attendance/weekly/attendance/chart",
+        method: "GET",
+      }),
+      providesTags: ["attendance"],
     }),
 
     attendanceFilter: builder.query({
       query: (range = "all") =>
-         ({
+      ({
         url: `/employee/attendance/filter?${range}`,
         method: "GET",
       }),
@@ -58,7 +58,7 @@ export const attendanceDetailApi = createApi({
       }),
       providesTags: ["attendance"],
     }),
-    
+
     employeeAllDetail: builder.mutation({
       query: (id) => (
         console.log("rtk+++", id),
@@ -68,14 +68,22 @@ export const attendanceDetailApi = createApi({
         }
       ),
     }),
+    employeeWork: builder.query({
+      query: (id) => (
+        {
+          url: `employee/work/get/${id}`,
+          method: "GET",
+        }
+      ),
+    }),
     employeeAttendance: builder.query({
-      query: ({range, id}) => (
+      query: ({ range, id }) => (
         {
           url: `employee/attendance/individual/${id}?${range}`,
           method: "GET",
         }
       ),
-       providesTags: ["employeeAttendance"],
+      providesTags: ["employeeAttendance"],
     }),
   }),
 });
@@ -88,5 +96,6 @@ export const {
   useAttendanceFilterQuery,
   useGetWeeklayCharQuery,
   useAttendanceByMonthQuery,
-  useEmployeeAttendanceQuery
+  useEmployeeAttendanceQuery,
+   useEmployeeWorkQuery
 } = attendanceDetailApi;

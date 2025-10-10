@@ -11,7 +11,7 @@ export const logiDetail = createApi({
         url: "/admin/login",
         method: "POST",
         data,
-        credentials: "include",
+        // credentials: "include",
       }),
       invalidatesTags: ["userSession"],
     }),

@@ -69,19 +69,22 @@ const EmployeeList = () => {
     return matchesSearch && matchesRole;
   });
 
+ 
+  
+
   return (
     <div className="px-6 py-2 bg-gray-50 min-h-screen">
       {/* Header Section */}
       <div className="bg-white rounded-lg shadow-sm px-6 py-2 mb-2">
         <div className="flex justify-between items-center mb-2">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Employee Overview</h1>
-            <dv className='flex gap-10 mt-2'>
+            <h1 className="text-2xl font-bold text-gray-800">Employee List</h1>
+            {/* <div className='flex gap-10 mt-2'>
             <p className="text-gray-600 text-sm">Number of Employees: <span className='font-bold'> {data?.summary?.totalEmployees || 0}</span></p>
             <p className="text-gray-600 text-sm">Number of Present Employees: <span className='font-bold'> {data?.summary?.present || 0}</span></p>
             <p className="text-gray-600 text-sm">Number of Absent Employees: <span className='font-bold'> {data?.summary?.onLeave || 0}</span></p>
 
-            </dv>
+            </div> */}
           </div>
           <button
             onClick={adddEmployee}
@@ -204,9 +207,10 @@ const EmployeeList = () => {
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">ID</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Employee Name</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Department</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Designation</th>
+                            <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Contact Number</th>
+                {/* <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Designation</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Grade</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Employee Manager</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Employee Manager</th> */}
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Actions</th>
               </tr>
             </thead>
@@ -218,7 +222,7 @@ const EmployeeList = () => {
                       <input type="checkbox" className="rounded" />
                     </td> */}
                     <td className="px-4 py-3 text-sm text-gray-900">{index + 1}</td>
-                    <td className="p-4 text-sm text-gray-900 font-medium">{employee.registrationId.slice(-4)}</td>
+                    <td className="p-4 text-sm text-gray-900 font-medium">{employee?.empId}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div
@@ -235,9 +239,10 @@ const EmployeeList = () => {
                       </div>
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-900">{employee.department || 'IT'}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900">{employee.designation || '-'}</td>
+                        <td className="px-4 py-3 text-sm text-gray-900">{employee?.mobile || 'IT'}</td>
+                    {/* <td className="px-4 py-3 text-sm text-gray-900">{employee.designation || '-'}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{employee.grade || '-'}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900">{employee.manager || '-'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">{employee.manager || '-'}</td> */}
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <button

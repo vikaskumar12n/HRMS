@@ -29,10 +29,10 @@ import EmployeeBankInfo from "./EmployeeAddEditComponent/BankAdd.jsx";
 import OtherInfoForm from "./EmployeeAddEditComponent/OtherInfoForm.jsx";
 import { useSearchParams } from 'react-router-dom';
 import { ClipLoader } from "react-spinners";
-const EmployeeAdd = () => {
 
-const [searchParams] = useSearchParams();
-const tab = searchParams.get("tab");
+const EmployeeAdd = () => {
+  const [searchParams] = useSearchParams();
+  const tab = searchParams.get("tab");
 
   const { id } = useParams();
   const [employeeEdit, { isLoading: editLoading }] = useEmployeeEditMutation({
@@ -42,8 +42,12 @@ const tab = searchParams.get("tab");
     useAddEmployeeMutation();
   const { data: employeeData, error } = useGetOneEmployeeQuery({ id });
   const [activeTab, setActiveTab] = useState(tab || 'personal');
-    const [showPassword, setShowPassword] = useState(false);
-const navigate = useNavigate()
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate()
+  
+  // Form validation errors
+  const [errors, setErrors] = useState({});
+  
   const [data, setData] = useState({
     fname: "",
     lname: "",
@@ -72,7 +76,7 @@ const navigate = useNavigate()
   ];
 
   useEffect(() => {
-      document.querySelector("input[name='fname']")?.focus();
+    document.querySelector("input[name='fname']")?.focus();
     if (id && employeeData) {
       setData((prev) => ({
         ...prev,
@@ -97,65 +101,148 @@ const navigate = useNavigate()
     }
   }, [employeeData, id]);
 
-useEffect(() => {
-  if (tab) {
-    setActiveTab(tab);
+  useEffect(() => {
+    if (tab) {
+      setActiveTab(tab);
+    }
+  }, [tab]);
+
+  // Field validation function
+  const validateField = (name, value) => {
+    let error = "";
+    
+    switch (name) {
+      case "fname":
+        if (!value.trim()) {
+          error = "First name is required";
+        } else if (value.length < 2) {
+          error = "First name must be at least 2 characters";
+        } else if (!/^[a-zA-Z\s]+$/.test(value)) {
+          error = "First name should contain only letters";
+        }
+        break;
+        
+      case "workEmail":
+        if (!value.trim()) {
+          error = "Official email is required";
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          error = "Please enter a valid email address";
+        }
+        break;
+        
+      case "mobile":
+        if (!value.trim()) {
+          error = "Phone number is required";
+        } else if (!/^[6789]\d{9}$/.test(value)) {
+          error = "Please enter a valid 10-digit phone number starting with 6, 7, 8, or 9";
+        }
+        break;
+        
+      case "email":
+        if (value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          error = "Please enter a valid email address";
+        }
+        break;
+        
+      case "dob":
+        if (!value.trim()) {
+          error = "Date of birth is required";
+        }
+        break;
+        
+      case "gender":
+        if (!value.trim()) {
+          error = "Gender is required";
+        }
+        break;
+        
+      case "address":
+        if (!value.trim()) {
+          error = "Address is required";
+        } else if (value.length < 10) {
+          error = "Address must be at least 10 characters";
+        }
+        break;
+        
+      case "city":
+        if (!value.trim()) {
+          error = "City is required";
+        } else if (!/^[a-zA-Z\s]+$/.test(value)) {
+          error = "City should contain only letters";
+        }
+        break;
+        
+      case "state":
+        if (!value.trim()) {
+          error = "State is required";
+        } else if (!/^[a-zA-Z\s]+$/.test(value)) {
+          error = "State should contain only letters";
+        }
+        break;
+    }
+    
+    return error;
+  };
+
+  const generatePassword = () => {
+    setShowPassword(true)
+    const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const lower = "abcdefghijklmnopqrstuvwxyz";
+    const numbers = "0123456789";
+    const symbols = "!@#$%^&*()_+";
+    const allChars = upper + lower + numbers + symbols;
+
+    let password = "";
+    password += upper[Math.floor(Math.random() * upper.length)];
+    password += lower[Math.floor(Math.random() * lower.length)];
+    password += numbers[Math.floor(Math.random() * numbers.length)];
+    password += symbols[Math.floor(Math.random() * symbols.length)];
+
+    for (let i = 4; i < 8; i++) {
+      password += allChars[Math.floor(Math.random() * allChars.length)];
+    }
+
+    return password.split('').sort(() => 0.5 - Math.random()).join('');
+  };
+
+  const handleCancel = () =>{
+    setData({
+      fname: "",
+      lname: "",
+      email: "",
+      workEmail: "",
+      mobile: "",
+      dob: "",
+      gender: "",
+      address: "",
+      city: "",
+      state: "",
+      qualification: "",
+      experience: "",
+      maritalStatus: "",
+      password: "",
+      photo: null,
+      joiningDate: "",
+    });
+    setErrors({});
   }
-}, [tab]);
 
-
-const generatePassword = () => {
-  setShowPassword(true)
-  const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const lower = "abcdefghijklmnopqrstuvwxyz";
-  const numbers = "0123456789";
-  const symbols = "!@#$%^&*()_+";
-  const allChars = upper + lower + numbers + symbols;
-
-  let password = "";
-  password += upper[Math.floor(Math.random() * upper.length)];
-  password += lower[Math.floor(Math.random() * lower.length)];
-  password += numbers[Math.floor(Math.random() * numbers.length)];
-  password += symbols[Math.floor(Math.random() * symbols.length)];
-
-  for (let i = 4; i < 8; i++) {
-    password += allChars[Math.floor(Math.random() * allChars.length)];
-  }
-
-  return password.split('').sort(() => 0.5 - Math.random()).join('');
-};
-
-const handleCancel = () =>{
-  setData({
-    fname: "",
-    lname: "",
-    email: "",
-    workEmail: "",
-    mobile: "",
-    dob: "",
-    gender: "",
-    address: "",
-    city: "",
-    state: "",
-    qualification: "",
-    experience: "",
-    maritalStatus: "",
-    password: "",
-    photo: null,
-    joiningDate: "",
-  })
-}
-
-const getMaxDOB = () => {
-  const today = new Date();
-  today.setFullYear(today.getFullYear() - 18);
-  return today.toISOString().split("T")[0]; 
-};
-
+  const getMaxDOB = () => {
+    const today = new Date();
+    today.setFullYear(today.getFullYear() - 18);
+    return today.toISOString().split("T")[0]; 
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setData({ ...data, [name]: value });
+    
+    // Clear error and validate field on change
+    const error = validateField(name, value);
+    setErrors(prev => ({
+      ...prev,
+      [name]: error
+    }));
   };
 
   const handleChangefile = (e) => {
@@ -165,10 +252,25 @@ const getMaxDOB = () => {
 
   const onSubmit = async (e) => {
     try {
-      let name = data.fname
       e.preventDefault();
+      
+      // Validate all required fields
+      const newErrors = {};
+      const requiredFields = ['fname', 'workEmail', 'mobile', 'dob', 'gender', 'address', 'city', 'state'];
+      
+      requiredFields.forEach(field => {
+        const error = validateField(field, data[field]);
+        if (error) newErrors[field] = error;
+      });
+      
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        return;
+      }
+      
+      let name = data.fname
       if(data.lname){
-name = data.fname + ' ' + data.lname ;
+        name = data.fname + ' ' + data.lname ;
       }
       const formData = new FormData();
       formData.append("name", name);
@@ -197,7 +299,7 @@ name = data.fname + ' ' + data.lname ;
         console.log(formData)
         const result = await addEmployee(formData).unwrap();
         console.log(result)
-         alert('Employee Resigter Successfull !')
+        alert('Employee Resigter Successfull !')
         if (result.success) navigate(`/dashboard/employee/edit/${result?.data?._id}?tab=work`);
       }
     } catch (error) {
@@ -216,243 +318,212 @@ name = data.fname + ' ' + data.lname ;
     switch (tabId) {
       case "personal":
         return (
-          data.fname && data.workEmail && data.mobile && data.dob && data.gender
+          data.fname && data.workEmail && data.mobile && data.dob && data.gender &&
+          !errors.fname && !errors.workEmail && !errors.mobile && !errors.dob && !errors.gender
         );
       case "address":
-        return data.address && data.city && data.state;
+        return (
+          data.address && data.city && data.state &&
+          !errors.address && !errors.city && !errors.state
+        );
       default:
         return false;
     }
   };
 
   const renderPersonalInfo = () => (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            First Name <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            name="fname"
-            value={data.fname}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#06425F] focus:border-transparent"
-            placeholder="Enter first name"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Last Name
-          </label>
-          <input
-            type="text"
-             name="lname"
-            value={data.lname}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#06425F] focus:border-transparent"
-            placeholder="Enter last name"
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <Mail className="inline h-4 w-4 mr-1" />
-            Official Email <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="email"
-            name="workEmail"
-            value={data.workEmail}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#06425F] focus:border-transparent"
-            placeholder="Enter official email"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <Phone className="inline h-4 w-4 mr-1" />
-            Phone Number <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="tel"
-            name="mobile"
-            value={data.mobile}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#06425F] focus:border-transparent"
-            placeholder="Enter 10 digit phone number"
-            pattern="^[6789]\d{9}$"
-            maxLength="10"
-            required
-          />
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          <Mail className="inline h-4 w-4 mr-1" />
-          Personal Email
-        </label>
-        <input
-          type="email"
-          name="email"
-          value={data.email}
-          onChange={handleChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#06425F] focus:border-transparent"
-          placeholder="Enter personal email"
-        />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <Calendar className="inline h-4 w-4 mr-1" />
-            Date of Birth <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="date"
-            name="dob"
-            max={getMaxDOB()}
-            value={data.dob}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#06425F] focus:border-transparent"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Gender <span className="text-red-500">*</span>
-          </label>
-          <div className="flex space-x-4 mt-2">
-            <label className="flex items-center">
+    <div className="space-y-6">
+      {/* Section 1: Basic Information */}
+      <div className="bg-gray-50 p-4 rounded-lg">
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                First Name <span className="text-red-500">*</span>
+              </label>
               <input
-                type="radio"
-                name="gender"
-                value="male"
-                checked={data.gender === "male"}
+                type="text"
+                name="fname"
+                value={data.fname}
                 onChange={handleChange}
-                className="mr-2 text-[#06425F] focus:ring-[#06425F]"
+                className={`w-full px-3 py-2 border ${errors.fname ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-[#06425F] focus:border-transparent`}
+                placeholder="Enter first name"
+                required
               />
-              Male
-            </label>
-            <label className="flex items-center">
+              {errors.fname && <p className="mt-1 text-sm text-red-500">{errors.fname}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Last Name
+              </label>
               <input
-                type="radio"
-                name="gender"
-                value="female"
-                checked={data.gender === "female"}
+                type="text"
+                name="lname"
+                value={data.lname}
                 onChange={handleChange}
-                className="mr-2 text-[#06425F] focus:ring-[#06425F]"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#06425F] focus:border-transparent"
+                placeholder="Enter last name"
               />
-              Female
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              <Calendar className="inline h-4 w-4 mr-1" />
+              Date of Birth <span className="text-red-500">*</span>
             </label>
-            <label className="flex items-center">
-              <input
-                type="radio"
-                name="gender"
-                value="other"
-                checked={data.gender === "other"}
-                onChange={handleChange}
-                className="mr-2 text-[#06425F] focus:ring-[#06425F]"
-              />
-              Other
+            <input
+              type="date"
+              name="dob"
+              max={getMaxDOB()}
+              value={data.dob}
+              onChange={handleChange}
+              className={`w-full px-3 py-2 border ${errors.dob ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-[#06425F] focus:border-transparent`}
+              required
+            />
+            {errors.dob && <p className="mt-1 text-sm text-red-500">{errors.dob}</p>}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Gender <span className="text-red-500">*</span>
             </label>
+            <div className="flex space-x-4 mt-2">
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="gender"
+                  value="male"
+                  checked={data.gender === "male"}
+                  onChange={handleChange}
+                  className="mr-2 text-[#06425F] focus:ring-[#06425F]"
+                />
+                Male
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="gender"
+                  value="female"
+                  checked={data.gender === "female"}
+                  onChange={handleChange}
+                  className="mr-2 text-[#06425F] focus:ring-[#06425F]"
+                />
+                Female
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="gender"
+                  value="other"
+                  checked={data.gender === "other"}
+                  onChange={handleChange}
+                  className="mr-2 text-[#06425F] focus:ring-[#06425F]"
+                />
+                Other
+              </label>
+            </div>
+            {errors.gender && <p className="mt-1 text-sm text-red-500">{errors.gender}</p>}
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <Heart className="inline h-4 w-4 mr-1" />
-            Marital Status
-          </label>
-          <select
-            name="maritalStatus"
-            value={data.maritalStatus}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#06425F] focus:border-transparent"
-          >
-            <option value="">Select marital status</option>
-            <option value="married">Married</option>
-            <option value="unmarried">Unmarried</option>
-          </select>
+      {/* Section 2: Contact Information */}
+      <div className="bg-gray-50 p-4 rounded-lg">
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Contact Information</h3>
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                <Mail className="inline h-4 w-4 mr-1" />
+                Official Email <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="email"
+                name="workEmail"
+                value={data.workEmail}
+                onChange={handleChange}
+                className={`w-full px-3 py-2 border ${errors.workEmail ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-[#06425F] focus:border-transparent`}
+                placeholder="Enter official email"
+                required
+              />
+              {errors.workEmail && <p className="mt-1 text-sm text-red-500">{errors.workEmail}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                <Phone className="inline h-4 w-4 mr-1" />
+                Phone Number <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="tel"
+                name="mobile"
+                value={data.mobile}
+                onChange={handleChange}
+                className={`w-full px-3 py-2 border ${errors.mobile ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-[#06425F] focus:border-transparent`}
+                placeholder="Enter 10 digit phone number"
+                pattern="^[6789]\d{9}$"
+                maxLength="10"
+                required
+              />
+              {errors.mobile && <p className="mt-1 text-sm text-red-500">{errors.mobile}</p>}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              <Mail className="inline h-4 w-4 mr-1" />
+              Personal Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={data.email}
+              onChange={handleChange}
+              className={`w-full px-3 py-2 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-[#06425F] focus:border-transparent`}
+              placeholder="Enter personal email"
+            />
+            {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
+          </div>
         </div>
-        {/* <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Experience (Years)
-          </label>
-          <input
-            type="number"
-            name="experience"
-            min={0}
-            max={50}
-            value={data.experience}
-            // onChange={handleChange}
-             onChange={(e) => {
-    const value = e.target.value;
-    if (value === '' || Number(value) >= 0) {
-      handleChange(e);
-    }
-  }}
-  onKeyDown={(e) => {
-    if (e.key === '-' || e.key === 'e' || e.key === '+' || e.key === '.') {
-      e.preventDefault(); 
-    }
-  }}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#06425F] focus:border-transparent"
-            placeholder="Enter years of experience"
-          />
-        </div> */}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-       <div className="relative">
-      <label className="block text-sm font-medium text-gray-700 mb-1">
-        <Lock className="inline h-4 w-4 mr-1" />
-        Password
-      </label>
-      <div className="relative flex items-center">
-        <input
-          type={showPassword ? "text" : "password"}
-          name="password"
-          value={data.password}
-          onChange={handleChange}
-          className="w-full px-3 py-2 pr-10  border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#06425F] focus:border-transparent"
-          placeholder="Enter password"
-        />
-        <button
-          type="button"
-          onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-24 text-gray-500 hover:text-gray-700"
-        >
-          {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-        </button>
-        <button
-          type="button"
-          onClick={() => setData({ ...data, password: generatePassword() })}
-          className="ml-2 text-sm text-white bg-[#06425F] px-2 py-2 rounded-md hover:bg-[#05364b]"
-        >
-          Generate
-        </button>
-      </div>
-    </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <Image className="inline h-4 w-4 mr-1" />
-            Profile Photo
-          </label>
-          <input
-            type="file"
-            name="photo"
-            onChange={handleChangefile}
-            accept="image/*"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#06425F] focus:border-transparent"
-          />
+      {/* Section 3: Additional Information */}
+      <div className="bg-gray-50 p-4 rounded-lg">
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Additional Information</h3>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              <Heart className="inline h-4 w-4 mr-1" />
+              Marital Status
+            </label>
+            <select
+              name="maritalStatus"
+              value={data.maritalStatus}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#06425F] focus:border-transparent"
+            >
+              <option value="">Select marital status</option>
+              <option value="single">Single</option>
+              <option value="married">Married</option>
+              <option value="divorced">Divorced</option>
+              <option value="widowed">Widowed</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              <Image className="inline h-4 w-4 mr-1" />
+              Profile Photo
+            </label>
+            <input
+              type="file"
+              name="photo"
+              onChange={handleChangefile}
+              accept="image/*"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#06425F] focus:border-transparent"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -470,10 +541,11 @@ name = data.fname + ' ' + data.lname ;
           value={data.address}
           onChange={handleChange}
           rows={3}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#06425F] focus:border-transparent resize-none"
+          className={`w-full px-3 py-2 border ${errors.address ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-[#06425F] focus:border-transparent resize-none`}
           placeholder="Enter complete address"
           required
         />
+        {errors.address && <p className="mt-1 text-sm text-red-500">{errors.address}</p>}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -486,10 +558,11 @@ name = data.fname + ' ' + data.lname ;
             name="city"
             value={data.city}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#06425F] focus:border-transparent"
+            className={`w-full px-3 py-2 border ${errors.city ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-[#06425F] focus:border-transparent`}
             placeholder="Enter city"
             required
           />
+          {errors.city && <p className="mt-1 text-sm text-red-500">{errors.city}</p>}
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -500,10 +573,11 @@ name = data.fname + ' ' + data.lname ;
             name="state"
             value={data.state}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#06425F] focus:border-transparent"
+            className={`w-full px-3 py-2 border ${errors.state ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-[#06425F] focus:border-transparent`}
             placeholder="Enter state"
             required
           />
+          {errors.state && <p className="mt-1 text-sm text-red-500">{errors.state}</p>}
         </div>
       </div>
     </div>
@@ -511,9 +585,9 @@ name = data.fname + ' ' + data.lname ;
 
   if (isLoading || editLoading) {
     return (
-        <div className='flex justify-center items-center h-[90vh]'>
-                <ClipLoader/>
-            </div>
+      <div className='flex justify-center items-center h-[90vh]'>
+        <ClipLoader/>
+      </div>
     );
   }
 
@@ -548,11 +622,11 @@ name = data.fname + ' ' + data.lname ;
                   <button
                     key={tab.id}
                     onClick={() => {
-        if (!tab.disabled) {
-          setActiveTab(tab.id);
-          navigate(`?tab=${tab.id}`); 
-        }
-      }}
+                      if (!tab.disabled) {
+                        setActiveTab(tab.id);
+                        navigate(`?tab=${tab.id}`); 
+                      }
+                    }}
                     disabled={tab.disabled}
                     className={`
                       flex items-center py-3 px-1 border-b-2 font-medium text-sm whitespace-nowrap
@@ -589,55 +663,53 @@ name = data.fname + ' ' + data.lname ;
 
           {/* Action Buttons */}
           {activeTab == "personal" || activeTab=="address"? (
-<div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
+            <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
+              <div className="flex justify-between items-center">
+                <button
+                  type="button"
+                  onClick={handleCancel}
+                  className="flex items-center px-4 cursor-pointer py-2 text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Reset
+                </button>
 
-            <div className="flex justify-between items-center">
-              <button
-                type="button"
-                onClick={handleCancel}
-                className="flex items-center px-4 cursor-pointer py-2 text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-              >
-                <X className="h-4 w-4 mr-2" />
-                Reset
-              </button>
+                <div className="flex space-x-3">
+                  {activeTab === "personal" && (
+                    <button
+                      type="button"
+                      onClick={nextTab}
+                      disabled={!isTabComplete("personal")}
+                      className="flex items-center px-4 py-2 bg-[#06425F] text-white rounded-md hover:bg-[#053649] disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Next: Address
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                    </button>
+                  )}
 
-              <div className="flex space-x-3">
-                {activeTab === "personal" && (
-                  <button
-                    type="button"
-                    onClick={nextTab}
-                    disabled={!isTabComplete("personal")}
-                    className="flex items-center px-4 py-2 bg-[#06425F] text-white rounded-md hover:bg-[#053649] disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Next: Address
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </button>
-                )}
-
-                {activeTab === "address" && (
-                  <button
-                    onClick={onSubmit}
-                    disabled={isLoading || !isTabComplete("personal")}
-                    className="flex items-center px-6 py-2 bg-[#06425F] text-white rounded-md hover:bg-[#053649] disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isLoading ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Saving...
-                      </>
-                    ) : (
-                      <>
-                        <Save className="h-4 w-4 mr-2" />
-                        Save Employee
-                      </>
-                    )}
-                  </button>
-                )}
+                  {activeTab === "address" && (
+                    <button
+                      onClick={onSubmit}
+                      disabled={isLoading || !isTabComplete("personal") || !isTabComplete("address")}
+                      className="flex items-center px-6 py-2 bg-[#06425F] text-white rounded-md hover:bg-[#053649] disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isLoading ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          Saving...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="h-4 w-4 mr-2" />
+                          Save Employee
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
           ): ''}
-          
         </div>
       </div>
     </div>

@@ -4,6 +4,7 @@ import {
   ChevronDown,
   LogOut,
   Settings,
+  User,
   Wifi,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -57,13 +58,21 @@ const EmployeeTopbar = () => {
     }
   };
 
+
+      console.log(user);
+      
+  
+
+  
+  
+   
   return (
     <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
       <div className="flex justify-between items-center px-4 lg:px-6 py-3">
         <div className="flex items-center space-x-4">
           <div className="hidden md:block">
             <h1 className="text-xl font-semibold text-gray-800 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text ">
-             Employee Dashboard
+              Employee Dashboard
             </h1>
             <p className="text-xs text-gray-500 mt-0.5">
               {currentTime.toLocaleDateString('en-US', {
@@ -96,9 +105,9 @@ const EmployeeTopbar = () => {
                 <div className="bg-gradient-to-br from-blue-500 to-purple-600 text-white rounded-full w-10 h-10 flex items-center justify-center shadow-sm">
                   <span className="text-sm font-bold">
 
-                    {<img className="rounded-full object-cover" src={user.employeeImage.secure_url || user.employeeImage.public_id} alt='User Image'/> || getInitials()}
+                    {<img className="rounded-full object-cover" src={user?.employeeImage.secure_url || user?.employeeImage.public_id} alt='User Image' /> || getInitials()}
 
-                    </span>
+                  </span>
                 </div>
                 <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
               </div>
@@ -110,9 +119,8 @@ const EmployeeTopbar = () => {
               </div>
               <ChevronDown
                 size={16}
-                className={`text-gray-500 transition-transform duration-200 ${
-                  profileMenuOpen ? 'rotate-180' : ''
-                }`}
+                className={`text-gray-500 transition-transform duration-200 ${profileMenuOpen ? 'rotate-180' : ''
+                  }`}
               />
             </button>
 
@@ -141,6 +149,23 @@ const EmployeeTopbar = () => {
                     <div>
                       <p className="font-medium">Sign Out</p>
                       <p className="text-xs text-red-400">Log out of your account</p>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => {
+                  
+                      // navigate(`employee/dashboard/employee/overview/${user?._id}?tab=parsonal`);
+                      navigate(`/employee/dashboard/employee/overview/${user?._id}?tab=parsonal`);
+                      setProfileMenuOpen(false);
+                    }}
+                    className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors w-full text-left"
+                  >
+                    <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                      <User size={16} className="text-blue-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium">My  Profile</p>
+                      {/* <p className="text-xs text-gray-500">Change your profile information</p> */}
                     </div>
                   </button>
                 </div>

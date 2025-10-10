@@ -4,7 +4,7 @@ import axiosBaseQuery from "./axiosBaseQuery";
 export const employeeDetailApi = createApi({
     reducerPath: "employee",
     baseQuery: axiosBaseQuery,
-    tagTypes: ["employee"], 
+    tagTypes: ["employee"],
 
     endpoints: (builder) => ({
         getAllEmployee: builder.query({
@@ -12,80 +12,103 @@ export const employeeDetailApi = createApi({
                 url: "/employee/all",
                 method: "GET",
             }),
-            providesTags: ["employee"], 
-        }), 
+            providesTags: ["employee"],
+        }),
 
         getAllEmployeeDetail: builder.query({
-            query: ({id}) => ({
+            query: ({ id }) => ({
                 url: `/employee/all/detail/${id}`,
                 method: "GET",
             }),
-            providesTags: ["employee"], 
-        }), 
+            providesTags: ["employee"],
+        }),
 
         getEmployeeProfile: builder.query({
             query: () => ({
                 url: "/employee/profile",
                 method: "GET",
             }),
-            providesTags: ["employee"], 
-        }), 
-        addEmployee:builder.mutation(
-            {
-            query:(formData)=>(
-                {
-                url:"employee/add",
-                method:"POST",
-                data:formData,
-            }),
-            invalidatesTags:["employee"],
+            providesTags: ["employee"],
         }),
-        deleteEmployee:builder.mutation({
-            query:(id)=>({
-               url:`employee/delete/${id}`,
-               method:"DELETE",
+        addEmployee: builder.mutation(
+            {
+                query: (formData) => (
+                    {
+                        url: "employee/add",
+                        method: "POST",
+                        data: formData,
+                    }),
+                invalidatesTags: ["employee"],
             }),
-            invalidatesTags:["employee"],
-         }) ,
-          employeeEdit:builder.mutation({
-            query:({id,formData})=>(
-                   console.log("rtk",id),
+        deleteEmployee: builder.mutation({
+            query: (id) => ({
+                url: `employee/delete/${id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["employee"],
+        }),
+        employeeEdit: builder.mutation({
+            query: ({ id, formData }) => (
+                console.log("rtk", id),
                 {
-                url:`employee/update/${id}`,
-                method:"PUT",
-                data:formData
-            }),
-            invalidatesTags:["employee"],
+                    url: `employee/update/${id}`,
+                    method: "PUT",
+                    data: formData
+                }),
+            invalidatesTags: ["employee"],
         }),
 
-        employeeLogin:builder.mutation({
-            query:(data)=>(
+        employeeLogin: builder.mutation({
+            query: (data) => (
                 {
-                url:`employee/login`,
-                method:"POST",
-                data
-            }),
-            invalidatesTags:["employee"],
+                    url: `employee/login`,
+                    method: "POST",
+                    data
+                }),
+            invalidatesTags: ["employee"],
         }),
         getOneEmployee: builder.query({
-            query: ({id}) => (
+            query: ({ id }) => (
                 //  console.log("rtk",id),
-                 
+
                 {
-                url: `/employee/get/${id}`,
-                method: "GET",
-            }),
-            providesTags: ["employee"], 
-        }), 
+                    url: `/employee/get/${id}`,
+                    method: "GET",
+                }),
+            providesTags: ["employee"],
+        }),
+
+        weeklyEmployee: builder.query({
+            query: ({ id }) => (
+                {
+                    url: `/employee/attendance/weekly/attendance/chart/${id}`,
+                    method: "GET",
+                }),
+            providesTags: ["employee"],
+        }),
+
+        birthdayEmployee: builder.query({
+            query: () => (
+                {
+                    url: `/employee/birthday`,
+                    method: "GET",
+                }),
+            providesTags: ["employee"],
+        }),
+
+
+
     }),
 });
 
-export const {useGetAllEmployeeQuery,
+export const { useGetAllEmployeeQuery,
     useAddEmployeeMutation,
     useDeleteEmployeeMutation,
     useEmployeeEditMutation,
     useEmployeeLoginMutation,
     useGetOneEmployeeQuery,
     useGetEmployeeProfileQuery,
-    useGetAllEmployeeDetailQuery
+    useGetAllEmployeeDetailQuery,
+    useWeeklyEmployeeQuery,
+    useBirthdayEmployeeQuery
 } = employeeDetailApi;
