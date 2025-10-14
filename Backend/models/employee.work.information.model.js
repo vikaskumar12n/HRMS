@@ -9,7 +9,7 @@ const employeeWorkInformationSchema = new Schema(
     },
     department: {
       type: String,
-      default:null
+      default:null  
     },
     shiftInformation: {
       type: String,
