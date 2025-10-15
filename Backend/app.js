@@ -44,8 +44,8 @@ const app=express();
 dotenv.config();
 
 app.use(cors({
-  origin: ["http://localhost:5173",,"https://ccwshrm.netlify.app", "http://localhost:3000","https://hrms112.netlify.app","https://updatehrmsa.netlify.app","https://dr-monika.netlify.app","https://updatehrmsa111.netlify.app"], 
-  origin: ["http://localhost:5173","http://localhost:3000","https://hrms112.netlify.app","https://updatehrmsa.netlify.app","http://localhost:5174","https://updatehrmsa111.netlify.app","sadbhawanaclinic.com","https://www.sadbhawanaclinic.com/", "https://sadbhawanaclinic.com/"], 
+  origin: ["http://localhost:5173","https://ccwshrm.netlify.app", "http://localhost:3000","https://hrms112.netlify.app","https://updatehrmsa.netlify.app","https://dr-monika.netlify.app","https://updatehrmsa111.netlify.app"], 
+  origin: ["http://localhost:5173", "https://ccwshrm.netlify.app","http://localhost:3000","https://hrms112.netlify.app","https://updatehrmsa.netlify.app","http://localhost:5174","https://updatehrmsa111.netlify.app","sadbhawanaclinic.com","https://www.sadbhawanaclinic.com/", "https://sadbhawanaclinic.com/"], 
   credentials: true,
 }));
 
